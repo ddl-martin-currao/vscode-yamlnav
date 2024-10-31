@@ -4,14 +4,22 @@ const fs = require('fs')
 const { list, copy } = require('./src/yaml-path')
 
 /**
+ * @param {vscode.TextDocument} document 
+ * @returns {boolean}                    True if the current document is a YAML document, either by extension or by format.
+ */
+function shouldWorkWithCurrentDocument(document) {
+  return document.languageId === "yaml" || path.extname(file) === '.yml' || path.extname(file) === '.yaml'
+}
+
+/**
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
   let searchPaths = vscode.commands.registerTextEditorCommand('yamlnav.search', function (editor) {
     const file = editor.document.fileName
 
-    if (path.extname(file) !== '.yml') {
-      vscode.window.showErrorMessage("Only works with .yml file.")
+    if (!shouldWorkWithCurrentDocument(editor.document)) {
+      vscode.window.showErrorMessage("Only works with yaml files.")
       return
     }
 
@@ -36,8 +44,8 @@ function activate(context) {
   let copyPath = vscode.commands.registerTextEditorCommand('yamlnav.copy', function(editor) {
     const file = editor.document.fileName
 
-    if (path.extname(file) !== '.yml') {
-      vscode.window.showErrorMessage("Only works with .yml file.")
+    if (!shouldWorkWithCurrentDocument(editor.document)) {
+      vscode.window.showErrorMessage("Only works with yaml files.")
       return
     }
 
